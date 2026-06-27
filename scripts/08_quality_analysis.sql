@@ -114,3 +114,22 @@ ROUND(AVG(DefectRate),4) AS AverageDefectRate
 FROM manufacturing.fact_manufacturing;
 
 GO
+
+--===========================================================
+-- Production Runs Requiring Immediate Attention
+--===========================================================
+
+SELECT TOP (10)
+
+ManufacturingID,
+QualityScore,
+DefectRate,
+ProductionCost,
+SupplierQuality
+
+FROM manufacturing.fact_manufacturing
+
+WHERE QualityScore < 75
+  AND DefectRate > 5
+
+ORDER BY DefectRate DESC;
