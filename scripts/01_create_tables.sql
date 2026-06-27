@@ -5,8 +5,17 @@
  Author          : Amtoj Singh
 
  Description:
-     Creates the staging table and the star schema
-     (Fact + Dimension tables) for the Manufacturing Quality Intelligence System.
+     Creates the staging table and dimensional data warehouse tables.
+
+ Database Model:
+
+     Staging
+        │
+        ▼
+ Fact_Manufacturing
+      │        │
+      ▼        ▼
+Dim_Date   Dim_DefectStatus
 
 ===============================================================================
 */
@@ -15,20 +24,17 @@ USE ManufacturingQualityIntelligence;
 GO
 
 /*==============================================================================
-    Drop Existing Tables (if rerunning script)
+DROP TABLES IF THEY ALREADY EXIST
 ==============================================================================*/
 
-IF OBJECT_ID('manufacturing.fact_production','U') IS NOT NULL
-DROP TABLE manufacturing.fact_production;
+IF OBJECT_ID('manufacturing.fact_manufacturing','U') IS NOT NULL
+DROP TABLE manufacturing.fact_manufacturing;
 
-IF OBJECT_ID('manufacturing.dim_operation','U') IS NOT NULL
-DROP TABLE manufacturing.dim_operation;
+IF OBJECT_ID('manufacturing.dim_date','U') IS NOT NULL
+DROP TABLE manufacturing.dim_date;
 
-IF OBJECT_ID('manufacturing.dim_workforce','U') IS NOT NULL
-DROP TABLE manufacturing.dim_workforce;
-
-IF OBJECT_ID('manufacturing.dim_quality','U') IS NOT NULL
-DROP TABLE manufacturing.dim_quality;
+IF OBJECT_ID('manufacturing.dim_defect_status','U') IS NOT NULL
+DROP TABLE manufacturing.dim_defect_status;
 
 IF OBJECT_ID('manufacturing.stg_manufacturing_data','U') IS NOT NULL
 DROP TABLE manufacturing.stg_manufacturing_data;
@@ -36,150 +42,145 @@ DROP TABLE manufacturing.stg_manufacturing_data;
 GO
 
 /*==============================================================================
-    STAGING TABLE
+STAGING TABLE
 ==============================================================================*/
 
 CREATE TABLE manufacturing.stg_manufacturing_data
 (
-    ProductionVolume        INT,
-    ProductionCost          DECIMAL(18,2),
+    ProductionVolume INT,
+    ProductionCost DECIMAL(18,2),
 
-    SupplierQuality         DECIMAL(6,2),
-    DeliveryDelay           INT,
+    SupplierQuality FLOAT,
+    DeliveryDelay INT,
 
-    DefectRate              DECIMAL(6,3),
-    QualityScore            DECIMAL(6,2),
+    DefectRate FLOAT,
+    QualityScore FLOAT,
 
-    MaintenanceHours        INT,
-    DowntimePercentage      DECIMAL(6,3),
+    MaintenanceHours INT,
+    DowntimePercentage FLOAT,
 
-    InventoryTurnover       DECIMAL(6,2),
-    StockoutRate            DECIMAL(6,3),
+    InventoryTurnover FLOAT,
+    StockoutRate FLOAT,
 
-    WorkerProductivity      DECIMAL(6,2),
-    SafetyIncidents         INT,
+    WorkerProductivity FLOAT,
+    SafetyIncidents INT,
 
-    EnergyConsumption       DECIMAL(12,2),
-    EnergyEfficiency        DECIMAL(6,3),
+    EnergyConsumption FLOAT,
+    EnergyEfficiency FLOAT,
 
-    AdditiveProcessTime     DECIMAL(6,2),
-    AdditiveMaterialCost    DECIMAL(12,2),
+    AdditiveProcessTime FLOAT,
+    AdditiveMaterialCost FLOAT,
 
-    DefectStatus            BIT
+    DefectStatus BIT
 );
 
 GO
 
 /*==============================================================================
-    QUALITY DIMENSION
+DATE DIMENSION
 ==============================================================================*/
 
-CREATE TABLE manufacturing.dim_quality
+CREATE TABLE manufacturing.dim_date
 (
-    QualityID INT IDENTITY(1,1) PRIMARY KEY,
+    DateID INT IDENTITY(1,1) PRIMARY KEY,
 
-    SupplierQuality DECIMAL(6,2) NOT NULL,
+    ProductionDate DATE NOT NULL,
 
-    QualityScore DECIMAL(6,2) NOT NULL,
+    DayNumber TINYINT,
 
-    DefectRate DECIMAL(6,3) NOT NULL,
+    MonthNumber TINYINT,
 
-    DeliveryDelay INT NOT NULL,
+    MonthName VARCHAR(20),
 
-    DefectStatus BIT NOT NULL
+    QuarterNumber TINYINT,
+
+    YearNumber SMALLINT
 );
 
 GO
 
 /*==============================================================================
-    WORKFORCE DIMENSION
+DEFECT STATUS DIMENSION
 ==============================================================================*/
 
-CREATE TABLE manufacturing.dim_workforce
+CREATE TABLE manufacturing.dim_defect_status
 (
-    WorkforceID INT IDENTITY(1,1) PRIMARY KEY,
+    DefectStatusID INT PRIMARY KEY,
 
-    WorkerProductivity DECIMAL(6,2) NOT NULL,
-
-    SafetyIncidents INT NOT NULL
+    DefectStatusName VARCHAR(30) NOT NULL
 );
 
 GO
 
 /*==============================================================================
-    OPERATION DIMENSION
+FACT TABLE
 ==============================================================================*/
 
-CREATE TABLE manufacturing.dim_operation
+CREATE TABLE manufacturing.fact_manufacturing
 (
-    OperationID INT IDENTITY(1,1) PRIMARY KEY,
+    ManufacturingID INT IDENTITY(100001,1) PRIMARY KEY,
 
-    MaintenanceHours INT NOT NULL,
+    DateID INT NOT NULL,
 
-    DowntimePercentage DECIMAL(6,3) NOT NULL,
+    DefectStatusID INT NOT NULL,
 
-    InventoryTurnover DECIMAL(6,2) NOT NULL,
+    ProductionVolume INT,
 
-    StockoutRate DECIMAL(6,3) NOT NULL,
+    ProductionCost DECIMAL(18,2),
 
-    EnergyConsumption DECIMAL(12,2) NOT NULL,
+    SupplierQuality FLOAT,
 
-    EnergyEfficiency DECIMAL(6,3) NOT NULL,
+    DeliveryDelay INT,
 
-    AdditiveProcessTime DECIMAL(6,2) NOT NULL,
+    DefectRate FLOAT,
 
-    AdditiveMaterialCost DECIMAL(12,2) NOT NULL
+    QualityScore FLOAT,
+
+    MaintenanceHours INT,
+
+    DowntimePercentage FLOAT,
+
+    InventoryTurnover FLOAT,
+
+    StockoutRate FLOAT,
+
+    WorkerProductivity FLOAT,
+
+    SafetyIncidents INT,
+
+    EnergyConsumption FLOAT,
+
+    EnergyEfficiency FLOAT,
+
+    AdditiveProcessTime FLOAT,
+
+    AdditiveMaterialCost FLOAT,
+
+    CONSTRAINT FK_Fact_Date
+        FOREIGN KEY(DateID)
+        REFERENCES manufacturing.dim_date(DateID),
+
+    CONSTRAINT FK_Fact_Defect
+        FOREIGN KEY(DefectStatusID)
+        REFERENCES manufacturing.dim_defect_status(DefectStatusID)
 );
 
 GO
 
 /*==============================================================================
-    FACT TABLE
-==============================================================================*/
-
-CREATE TABLE manufacturing.fact_production
-(
-    ProductionID BIGINT IDENTITY(100001,1) PRIMARY KEY,
-
-    ProductionVolume INT NOT NULL,
-
-    ProductionCost DECIMAL(18,2) NOT NULL,
-
-    QualityID INT NOT NULL,
-
-    WorkforceID INT NOT NULL,
-
-    OperationID INT NOT NULL,
-
-    CONSTRAINT FK_Fact_Quality
-        FOREIGN KEY (QualityID)
-        REFERENCES manufacturing.dim_quality(QualityID),
-
-    CONSTRAINT FK_Fact_Workforce
-        FOREIGN KEY (WorkforceID)
-        REFERENCES manufacturing.dim_workforce(WorkforceID),
-
-    CONSTRAINT FK_Fact_Operation
-        FOREIGN KEY (OperationID)
-        REFERENCES manufacturing.dim_operation(OperationID)
-);
-
-GO
-
-/*==============================================================================
-    Verify Tables
+VERIFY TABLES
 ==============================================================================*/
 
 SELECT
-    TABLE_NAME
+TABLE_NAME
 FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_SCHEMA = 'manufacturing'
+WHERE TABLE_SCHEMA='manufacturing'
 ORDER BY TABLE_NAME;
 
 GO
 
 PRINT '==========================================';
-PRINT 'Manufacturing Warehouse Created Successfully';
+PRINT 'Manufacturing Warehouse Created';
 PRINT '==========================================';
 
 GO
