@@ -241,8 +241,8 @@ Aspiring Manufacturing & Data Analyst
 💼 LinkedIn: [linkedin.com/in/amtoj23
 ](https://www.linkedin.com/in/amtoj23)
 
-🌐 GitHub: *your-github*
-
+🌐 GitHub: [github.com/amtxj23
+](https://github.com/amtxj23)
 ---
 
 # If you found this project interesting...
