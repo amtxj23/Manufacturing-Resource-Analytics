@@ -1,15 +1,24 @@
 <div align="center">
 
-# 🏭 Manufacturing Quality Intelligence System
+# 🏭 Manufacturing Resource Analytics
 
 ### End-to-End SQL Data Analytics Project | Manufacturing Intelligence | Business Analytics
 
-<img src="C:\Users\amito\OneDrive\Pictures\Screenshots\Screenshot 2026-06-27 140752.png" width="100%">
+<p align="center">
+  <img src="docs/Project_Banner.png" alt="Manufacturing Resource Analytics Banner" width="100%">
+</p>
 
-[![SQL](https://img.shields.io/badge/SQL-Microsoft_SQL_Server-red?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)]
-[![Power BI](https://img.shields.io/badge/PowerBI-Visualization-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)]
-[![GitHub](https://img.shields.io/badge/GitHub-Portfolio-black?style=for-the-badge&logo=github)]
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)]
+<p align="center">
+
+[![SQL](https://img.shields.io/badge/SQL-Microsoft_SQL_Server-red?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/sql-server)
+
+[![Power BI](https://img.shields.io/badge/PowerBI-Visualization-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](https://powerbi.microsoft.com)
+
+[![GitHub](https://img.shields.io/badge/GitHub-Portfolio-black?style=for-the-badge&logo=github)](https://github.com/amtxj23)
+
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+</p>
 
 ### Transforming Raw Manufacturing Data into Actionable Business Intelligence
 
@@ -187,7 +196,7 @@ Manufacturing-Quality-Intelligence-System
 
 # 📊 Dashboard Preview
 
-> *(Add Power BI Dashboard Screenshot Here)*
+> *(will be uploaded soon)*
 
 <img src="docs/dashboard.png" width="100%">
 
